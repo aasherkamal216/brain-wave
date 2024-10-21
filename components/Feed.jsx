@@ -19,22 +19,38 @@ const PromptCardList = ({ data, handleTagClick }) => {
 
 const Feed = () => {
   const [allPosts, setAllPosts] = useState([]);
+
+  // Search states
   const [searchText, setSearchText] = useState("");
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchedResults, setSearchedResults] = useState([]);
 
   // Fetch all posts
   const fetchPosts = async () => {
-    const response = await fetch("/api/prompt");
-    const data = await response.json();
-    setAllPosts(data);
+    try {
+      const response = await fetch("/api/prompt", {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-store", // Prevent caching
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch posts");
+      const data = await response.json();
+      setAllPosts(data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  // Filter prompts based on search text
+  // Refetch posts after edit or delete
+  const handlePostUpdate = async () => {
+    await fetchPosts(); // Refetch posts to ensure the state is up to date
+  };
+
   const filterPrompts = (searchtext) => {
     const regex = new RegExp(searchtext, "i"); // 'i' flag for case-insensitive search
     return allPosts.filter(
@@ -49,6 +65,7 @@ const Feed = () => {
     clearTimeout(searchTimeout);
     setSearchText(e.target.value);
 
+    // Debounce search
     setSearchTimeout(
       setTimeout(() => {
         const searchResult = filterPrompts(e.target.value);
@@ -59,6 +76,7 @@ const Feed = () => {
 
   const handleTagClick = (tagName) => {
     setSearchText(tagName);
+
     const searchResult = filterPrompts(tagName);
     setSearchedResults(searchResult);
   };
