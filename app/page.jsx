@@ -1,30 +1,22 @@
-const PromptCard = ({ post, handleTagClick, reFetchPosts }) => {
-  const handleEdit = () => {
-    // Your edit logic here
-    reFetchPosts(); // Trigger fetch after edit
-  };
+import Feed from '@components/Feed';
 
-  const handleDelete = async () => {
-    const hasConfirmed = confirm("Are you sure you want to delete this prompt?");
-    if (hasConfirmed) {
-      try {
-        await fetch(`/api/prompt/${post._id}`, {
-          method: "DELETE",
-        });
-        reFetchPosts(); // Trigger fetch after delete
-      } catch (error) {
-        console.log("Error deleting prompt", error);
-      }
-    }
-  };
-
+const Home = () => {
   return (
-    <div>
+    <section className="w-full flex-center flex-col">
+        <h1 className="head_text text-center">
+           Discover & Share
+           <br className="max-md" />
+           <span className="blue_gradient text-center">
+           Creative AI Prompts
+           </span>
+        </h1>
+        <p className="desc text-center">
+        BrainWave is a community-driven, open-source platform for creating,
+        discovering, and sharing AI prompts.
+        </p>
+        <Feed />
+    </section>
+  )
+}
 
-      <button onClick={handleEdit}>Edit</button>
-      <button onClick={handleDelete}>Delete</button>
-    </div>
-  );
-};
-
-export default PromptCard;
+export default Home
