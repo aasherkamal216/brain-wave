@@ -11,10 +11,10 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
   const router = useRouter();
 
   const [copied, setCopied] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const promptCharacterLimit = 500; // Set character limit for showing "read more"
 
   const handleProfileClick = () => {
-    console.log(post);
-
     if (post.creator._id === session?.user.id) return router.push("/profile");
 
     router.push(`/profile/${post.creator._id}?name=${post.creator.username}`);
@@ -24,6 +24,10 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
     setCopied(post.prompt);
     navigator.clipboard.writeText(post.prompt);
     setTimeout(() => setCopied(false), 3000);
+  };
+
+  const handleToggleReadMore = () => {
+    setIsExpanded((prev) => !prev);
   };
 
   return (
@@ -65,7 +69,22 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
         </div>
       </div>
 
-      <p className='my-4 font-satoshi text-sm text-gray-700'>{post.prompt}</p>
+      {/* Display shortened or full prompt based on isExpanded */}
+      <p className='my-4 font-satoshi text-sm text-gray-700 white-space-pre-wrap'>
+        {isExpanded || post.prompt.length <= promptCharacterLimit
+          ? post.prompt
+          : `${post.prompt.slice(0, promptCharacterLimit)}...`}
+      </p>
+
+      {post.prompt.length > promptCharacterLimit && (
+        <button
+          className='font-inter text-sm orange_text cursor-pointer'
+          onClick={handleToggleReadMore}
+        >
+          {isExpanded ? "Read less" : "...Read more"}
+        </button>
+      )}
+
       <p
         className='font-inter text-sm blue_gradient cursor-pointer'
         onClick={() => handleTagClick && handleTagClick(post.tag)}

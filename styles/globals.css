@@ -198,3 +198,11 @@
   @apply rounded-full border border-black bg-black py-1.5 px-5 text-white transition-all hover:bg-white hover:text-black text-center text-sm font-inter flex items-center justify-center;
   z-index: 999; /* Ensure it's on top of other elements */
 }
+
+.white-space-pre-wrap {
+  white-space: pre-wrap;
+}
+
+.orange_text {
+  color: #f65f02;
+}
